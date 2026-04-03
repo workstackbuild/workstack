@@ -1,55 +1,87 @@
-import workflowsData from "@/data/workflows.json";
+import fs from "fs";
+import path from "path";
 
-type Workflow = {
-  id: string;
-  title: string;
-  description: string;
-  tools: string[];
-  difficulty: string;
-  time: string;
-};
+export default function WorkflowPage({ params }: { params: { slug: string } }) {
+  const filePath = path.join(
+    process.cwd(),
+    "data",
+    "workflows",
+    `${params.slug}.json`
+  );
 
-export default async function WorkflowPage({ params }: any) {
-  const resolvedParams = await params;
-
-  console.log("SLUG:", resolvedParams.slug);
-  console.log("DATA:", workflowsData);
-
-  const data = (workflowsData as any).default || workflowsData;
-
-  const workflow = data.find((w: any) => w.id === resolvedParams.slug);
-
-  if (!workflow) {
-    return <div className="p-10">Workflow not found</div>;
+  if (!fs.existsSync(filePath)) {
+    return <div className="p-6">Workflow not found</div>;
   }
 
+  const fileData = fs.readFileSync(filePath, "utf-8");
+  const data = JSON.parse(fileData);
+
   return (
-    <div className="p-10 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-semibold mb-4">{workflow.title}</h1>
-      <p className="text-gray-600 mb-6">{workflow.description}</p>
+    <div className="min-h-screen bg-blue-50 p-6">
+      <div className="max-w-4xl mx-auto space-y-6">
 
-      <div className="flex gap-2 mb-4">
-        {workflow.tools.map((tool: string) => (
-          <span key={tool} className="bg-gray-100 px-2 py-1 rounded text-sm">
-            {tool}
-          </span>
+        {/* Title */}
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <h1 className="text-2xl font-bold mb-2">{data.title}</h1>
+          <p className="text-gray-600">{data.description}</p>
+        </div>
+
+        {/* What you get */}
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <h2 className="text-xl font-semibold mb-4">What You’ll Get</h2>
+          <ul className="list-disc pl-5 space-y-2">
+            {data.what_you_get?.map((item: string, i: number) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Tools */}
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <h2 className="text-xl font-semibold mb-4">Tools</h2>
+          <div className="flex gap-2 flex-wrap">
+            {data.tools?.map((tool: string, i: number) => (
+              <span key={i} className="bg-blue-100 px-3 py-1 rounded-full text-sm">
+                {tool}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Sections */}
+        {data.sections?.map((section: any, idx: number) => (
+          <div key={idx} className="bg-white p-6 rounded-2xl shadow">
+            <h2 className="text-xl font-semibold mb-4">{section.title}</h2>
+            <ul className="space-y-3">
+              {section.steps.map((step: any, i: number) => (
+                <li key={i} className="bg-blue-50 p-3 rounded-lg border">
+                  <strong>{step.title}</strong>
+                  <p className="text-sm text-gray-600">{step.description}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
-      </div>
 
-      <div className="text-sm text-gray-500 mb-6">
-        {workflow.difficulty} • {workflow.time}
-      </div>
+        {/* Pattern Templates */}
+        {data.pattern_templates && (
+          <div className="bg-white p-6 rounded-2xl shadow">
+            <h2 className="text-xl font-semibold mb-4">Pattern Templates</h2>
+            {data.pattern_templates.formats.map((tpl: any, i: number) => (
+              <div key={i} className="mb-4">
+                <p className="font-medium">{tpl.name}</p>
+                <p className="text-sm text-gray-600 mb-2">{tpl.template}</p>
+                <ul className="text-sm text-green-700 space-y-1">
+                  {tpl.examples.map((ex: string, j: number) => (
+                    <li key={j}>• {ex}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
 
-      <div className="mt-6">
-  <h2 className="text-xl font-semibold mb-3">Steps</h2>
-  <ol className="list-decimal pl-5 space-y-2">
-    {workflow.steps?.map((step: string, index: number) => (
-      <li key={index} className="text-gray-700">
-        {step}
-      </li>
-    ))}
-  </ol>
-</div>
+      </div>
     </div>
   );
 }
