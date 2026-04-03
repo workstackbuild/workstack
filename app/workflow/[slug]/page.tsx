@@ -29,7 +29,7 @@ export default async function WorkflowPage({ params }: any) {
       <p className="text-gray-600 mb-6">{workflow.description}</p>
 
       <div className="flex gap-2 mb-4">
-        {workflow.tools.map((tool) => (
+        {workflow.tools.map((tool: string) => (
           <span key={tool} className="bg-gray-100 px-2 py-1 rounded text-sm">
             {tool}
           </span>
