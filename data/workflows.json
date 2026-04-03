@@ -1,0 +1,18 @@
+[
+  {
+    "id": "youtube-shorts",
+    "title": "YouTube Shorts from Reddit",
+    "description": "Turn Reddit posts into short-form videos",
+    "tools": ["ChatGPT", "Pictory"],
+    "difficulty": "Beginner",
+    "time": "20 min"
+  },
+  {
+    "id": "linkedin-engine",
+    "title": "LinkedIn Content Engine",
+    "description": "Generate weekly LinkedIn posts using AI",
+    "tools": ["ChatGPT", "Notion"],
+    "difficulty": "Intermediate",
+    "time": "30 min"
+  }
+]
